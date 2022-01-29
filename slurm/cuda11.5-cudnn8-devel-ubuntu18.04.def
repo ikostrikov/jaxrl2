@@ -1,0 +1,45 @@
+Bootstrap: docker
+From: nvidia/cuda:11.5.0-cudnn8-devel-ubuntu18.04
+
+%labels
+     ABOUTME Ubuntu-18.04, CUDA 11.5, CUDNN 8.3
+
+%environment
+    export LC_ALL=C
+    export LANG=C.UTF-8
+
+%runscript
+    exec /bin/bash "$@"
+
+%post
+    mkdir -p /global/scratch
+    mkdir -p /global/home/users/kostrikov
+    touch /bin/nvidia-smi
+    touch /usr/bin/nvidia-smi
+    touch /usr/bin/nvidia-debugdump
+    touch /usr/bin/nvidia-persistenced
+    touch /usr/bin/nvidia-cuda-mps-control
+    touch /usr/bin/nvidia-cuda-mps-server
+    mkdir /etc/dcv
+    mkdir /var/lib/dcv-gl
+    mkdir /usr/lib64
+
+    apt-get -y update
+    apt-get -y upgrade
+
+    export DEBIAN_FRONTEND=noninteractive
+
+    # to change time zone to EST
+    export TZ="America/Los_Angeles"
+    apt-get install tzdata
+    rm -rf /etc/localtime
+    cp -rp /usr/share/zoneinfo/EST /etc/localtime
+
+    apt-get -y install git curl wget make build-essential cmake
+    apt-get -y install libgl1-mesa-dev libgl1-mesa-glx libglew-dev 
+    apt-get -y install libosmesa6-dev software-properties-common 
+    apt-get -y install net-tools unzip vim xpra xserver-xorg-dev
+    apt-get -y install libglew2.0
+    apt-get clean
+
+    exit
